@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Pertanyaan;
 use App\Tag;
+use App\Jawaban;
 use Illuminate\Support\Facades\Auth;
 
 class PertanyaanController extends Controller
@@ -52,17 +53,17 @@ class PertanyaanController extends Controller
         ]);
         // Create Pertanyaan
         $pertanyaan = Pertanyaan::create([
-            "judul" => $validasi["judul"],
-            "pertanyaan" => $validasi["pertanyaan"],
+            "judul" => ucfirst(strtolower($validasi["judul"])),
+            "pertanyaan" =>  ucfirst(strtolower($validasi["pertanyaan"])),
             "user_id" => Auth::id(),
         ]);
         // Create tag
         $validasi["tag"] = explode(",",$validasi["tag"]);
         foreach ($validasi["tag"] as $tag){
             $tags = Tag::firstOrCreate([
-                "name" => $tag
+                "name" => ucfirst(strtolower($tag))
             ]);
-            $pertanyaan->tags()->attach($tags->id,[
+            $pertanyaan->tag()->attach($tags->id,[
                 'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
                 'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
             ]);
@@ -91,7 +92,10 @@ class PertanyaanController extends Controller
      */
     public function edit($id)
     {
-        //
+        // $pertanyaan = Pertanyaan::find($id);
+        // $tag = $pertanyaan->tag->implode("name",",");
+
+        // return view("pertanyaan.edit",compact("pertanyaan","tag"));
     }
 
     /**
@@ -103,7 +107,18 @@ class PertanyaanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // $validasi = $request->validate([
+        //     "judul" => 'required|max:255',
+        //     "pertanyaan" => 'required',
+        //     "tag" => 'required',
+        // ]);
+        // // Create Pertanyaan
+        //  $pertanyaan = Pertanyaan::where("id",$id)->update([
+        //     "judul" => $validasi["judul"],
+        //     "pertanyaan" => $validasi["pertanyaan"],
+        // ]);
+        // // Create tag
+        // $validasi["tag"] = explode(",",$validasi["tag"]);
     }
 
     /**
@@ -115,5 +130,17 @@ class PertanyaanController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+     /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function komentar($id)
+    {
+        $pertanyaan = Pertanyaan::find($id);
+        return view('pertanyaan.komentar',compact('pertanyaan'));
     }
 }

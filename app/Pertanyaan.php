@@ -15,4 +15,10 @@ class Pertanyaan extends Model
     public function user(){
         return $this->belongsTo('App\User');
     }
+    public function jawaban(){
+        return $this->hasMany('App\Jawaban');
+    }
+    public function komentar(){
+        return $this->belongsToMany('App\Komentar','pertanyaan_komentar');
+    }
 }

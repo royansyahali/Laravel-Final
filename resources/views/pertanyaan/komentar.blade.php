@@ -18,18 +18,17 @@
     </div>
     <div class="row justify-content-center mb-2">
         <div class="col-md-8 bg-light">
-            <form  action="{{route('jawabans.store',["id" => $pertanyaan->id])}}" method="POST">
+            <form  action="{{route('komentars.pertanyaan',["id" => $pertanyaan->id])}}" method="POST">
                 @csrf
                 <div class="form-group">
-                    <label for="jawaban" class="font-weight-bold">Jawaban Anda</label>
-                    <textarea class="form-control" id="jawaban" rows="3" name="jawaban">{{old("jawaban")}}</textarea>
-                @error("jawaban")
+                    <label for="komentar" class="font-weight-bold">Komentar Anda</label>
+                    <textarea class="form-control" id="komentar" rows="3" name="komentar">{{old("komentar")}}</textarea>
+                @error("komentar")
                     <div class="alert alert-danger">{{$message}}</div>
                 @enderror
                 </div>
                 <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-                <a href="{{route('komentars.pertanyaan.index',['id' => $pertanyaan->id])}}" type="button" class="btn btn-info btn-sm ">Komentar</a>
-                <a href="{{route('pertanyaans.index')}}" type="button" class="btn btn-dark btn-sm ">Kembali</a>
+                <a href="{{route('pertanyaans.show',['pertanyaan' => $pertanyaan->id])}}" type="button" class="btn btn-dark btn-sm ">Kembali</a>
             </form>
         </div>
     </div>
@@ -39,20 +38,17 @@
                 <thead class="thead-dark">
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Jawaban</th>
                     <th scope="col">Nama</th>
                     <th scope="col">Komentar</th>
                   </tr>
                 </thead>
                 <tbody>
-                @forelse ($pertanyaan->jawaban as $key => $item)
+                @forelse ($pertanyaan->komentar as $key => $item)
                     <tr>
                         <th scope="row">{{$key +1}}</th>
-                        <td>{{$item->jawaban}}</td>
+                        <td>{{$item->komentar}}</td>
                         <td>{{$item->user->name}}</td>
-                        <td>
-                            <a class="btn btn-info" href="{{route("jawabans.show",["id" => $item->id])}}" role="button">Komen</a>
-                        </td>
+
                     </tr>
                 @empty
                     <td colspan="4" class="alert alert-info font-weight-bold text-dark" role="alert">
@@ -61,7 +57,6 @@
                 @endforelse
               </table>
         </div>
-    </div>
 </div>
 @endsection
 

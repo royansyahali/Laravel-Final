@@ -42,6 +42,7 @@
                         <td>{{$item->komentar}}</td>
                         <td>{{$item->user->name}}</td>
 
+
                     </tr>
                 @empty
                     <td colspan="4" class="alert alert-info font-weight-bold text-dark" role="alert">

@@ -41,7 +41,8 @@
                     <th scope="col">#</th>
                     <th scope="col">Jawaban</th>
                     <th scope="col">Nama</th>
-                    <th scope="col">Komentar</th>
+                    <th scope="col">Valid</th>
+                    <th scope="col">Detail</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -50,12 +51,43 @@
                         <th scope="row">{{$key +1}}</th>
                         <td>{{$item->jawaban}}</td>
                         <td>{{$item->user->name}}</td>
+                        @if ($item->valid)
+                            <td>
+                            <form class="d-inline " action="{{route("valid.jawaban",["id" => $item->id])}}" method='POST'>
+                                @csrf
+                                @method("DELETE")
+                                <button class="btn btn-success" type="submit">Valid</button>
+                            </form>
+                            Valid
+                            </td>
+                        @else
+                            <td>
+                            <form class="d-inline " action="{{route("valid.jawaban",["id" => $item->id])}}" method='POST'>
+                                @csrf
+                                @method("DELETE")
+                                <button class="btn btn-success" type="submit">Validasi</button>
+                            </form>
+                            Belum Valid
+                            </td>
+                        @endif
+
                         <td>
-                            <a class="btn btn-info" href="{{route("jawabans.show",["id" => $item->id])}}" role="button">Komen</a>
+                            <a class="btn btn-info" href="{{route("jawabans.show",["id" => $item->id])}}" role="button">Lihat</a>
+                            <form class="d-inline " action="{{route("upvote.jawaban",["id" => $item->id])}}" method='POST'>
+                                @csrf
+                                @method("DELETE")
+                                <button class="btn btn-success" type="submit">Like</button>
+                            </form>
+                            <form class="d-inline " action="{{route("downvote.jawaban",["id" => $item->id])}}" method='POST'>
+                                @csrf
+                                @method("DELETE")
+                                <button class="btn btn-danger" type="submit">Dislike</button>
+                            </form>
+                            <button class="btn btn-info" type="button">{{$item->poin}}</button>
                         </td>
                     </tr>
                 @empty
-                    <td colspan="4" class="alert alert-info font-weight-bold text-dark" role="alert">
+                    <td colspan="5" class="alert alert-info font-weight-bold text-dark" role="alert">
                         Belum ada
                     </td>
                 @endforelse

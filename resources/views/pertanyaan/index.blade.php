@@ -23,8 +23,19 @@
                         <th scope="row">{{$key +1}}</th>
                         <td>{{$item->judul}}</td>
                         <td>{{$item->pertanyaan}}</td>
-                        <td>
+                        <td class="ml-2">
                             <a class="btn btn-info" href="{{route("pertanyaans.show",["pertanyaan" => $item->id])}}" role="button">Lihat</a>
+                            <form class="d-inline " action="{{route("upvote.pertanyaan",["id" => $item->id])}}" method='POST'>
+                                @csrf
+                                @method("DELETE")
+                                <button class="btn btn-success" type="submit">Up</button>
+                            </form>
+                            <form class="d-inline " action="{{route("downvote.pertanyaan",["id" => $item->id])}}" method='POST'>
+                                @csrf
+                                @method("DELETE")
+                                <button class="btn btn-danger" type="submit">Down</button>
+                            </form>
+                            <button class="btn btn-info" type="button">{{$item->poin}}</button>
                         </td>
                     </tr>
                 @empty

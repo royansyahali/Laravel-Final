@@ -21,4 +21,11 @@ class Pertanyaan extends Model
     public function komentar(){
         return $this->belongsToMany('App\Komentar','pertanyaan_komentar');
     }
+    public function votepertanyaan(){
+        return $this->hasMany('App\Votepertanyaan');
+    }
+    public function votepertanyaanup(){
+        return $this->hasMany('App\Votepertanyaanup');
+    }
+
 }

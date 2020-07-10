@@ -18,4 +18,10 @@ class Jawaban extends Model
     public function komentar(){
         return $this->belongsToMany('App\Komentar');
     }
+    public function votejawaban(){
+        return $this->hasMany('App\Votejawaban');
+    }
+    public function votejawabanup(){
+        return $this->hasMany('App\Votejawabanup');
+    }
 }

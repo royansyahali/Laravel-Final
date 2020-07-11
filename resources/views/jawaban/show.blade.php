@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
                 <div class="jumbotron">
-                    <h3>{{$jawaban->jawaban}}</h3>
+                    <h3>{!!$jawaban->jawaban!!}</h3>
                 </div>
         </div>
     </div>
@@ -41,8 +41,6 @@
                         <th scope="row">{{$key +1}}</th>
                         <td>{{$item->komentar}}</td>
                         <td>{{$item->user->name}}</td>
-
-
                     </tr>
                 @empty
                     <td colspan="4" class="alert alert-info font-weight-bold text-dark" role="alert">

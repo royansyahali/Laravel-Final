@@ -16,6 +16,9 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
+    \UniSharp\LaravelFilemanager\Lfm::routes();
+});
 
 Route::get('/home', 'HomeController@index')->name('home');
 
@@ -24,6 +27,11 @@ Route::get('/komentars-pertanyaan/{id}', 'PertanyaanController@komentar')->name(
 Route::get('/jawabans', 'JawabanController@index')->name('jawabans.index');
 Route::post('/jawabans/{id}', 'JawabanController@store')->name('jawabans.store');
 Route::get('/jawabans/{id}', 'JawabanController@show')->name('jawabans.show');
+Route::get('/jawabans/{id}/edit', 'JawabanController@edit')->name('jawabans.edit');
+Route::put('/jawabans/{id}', 'JawabanController@update')->name('jawabans.update');
+
+
+
 Route::post('/komentars-jawaban/{id}', 'KomentarController@jawabanstore')->name('komentars.jawaban');
 Route::post('/komentars-pertanyaan/{id}', 'KomentarController@pertanyaanstore')->name('komentars.pertanyaan');
 Route::delete('/upvote-pertanyaan/{id}', 'PertanyaanController@upvote')->name('upvote.pertanyaan');

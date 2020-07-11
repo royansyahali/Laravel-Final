@@ -66,7 +66,7 @@ class JawabanController extends Controller
     public function show($id)
     {
         $jawaban = Jawaban::find($id);
-        return view("jawabans.show",compact('jawaban'));
+        return view("jawaban.show",compact('jawaban'));
     }
 
     /**
@@ -77,7 +77,8 @@ class JawabanController extends Controller
      */
     public function edit($id)
     {
-        //
+        $jawaban = Jawaban::find($id);
+        return view("jawaban.edit",compact('jawaban'));
     }
 
     /**
@@ -89,7 +90,16 @@ class JawabanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validasi = $request->validate([
+            "jawaban" => 'required',
+        ]);
+        Jawaban::where('id',$id)->update([
+            'jawaban' => $validasi["jawaban"]
+        ]);
+        $jawaban = Jawaban::find($id);
+        return redirect()->route("pertanyaans.show",["pertanyaan" => $jawaban->pertanyaan->id]);
+
+
     }
 
     /**
@@ -122,7 +132,7 @@ class JawabanController extends Controller
                 return redirect()->route("pertanyaans.show",["pertanyaan"=>$jawaban->pertanyaan->id]);
             }
         }else{
-            return redirect()->route("pertanyaans.show",["pertanyaan"=>$jawaban->pertanyaan->id]);
+            return redirect()->route("pertanyaans.show",["pertanyaan"=>$jawaban->pertanyaan->id])->with('status', 'Poin Belum Cukup');
         }
     }
 
@@ -131,17 +141,21 @@ class JawabanController extends Controller
         $user= $jawaban->user->id;
         $pertanyaan = $jawaban->pertanyaan->id;
         $poin= $jawaban->user->poin;
-        if(Auth::user()->poin > 15){
+        if(Auth::user()->poin >= 15){
             if($jawaban->votejawaban->where("user_id",Auth::id())->isNotEmpty()){
                 User::where("id",$user)->update([
                     "poin" => $poin+=10
                 ]);
                 Jawaban::where("id",$id)->update([
-                    "poin" => $jawaban->poin+=1
+                    "poin" => $jawaban->poin+=2
                 ]);
                 Votejawaban::where("user_id",Auth::id())
                     ->where("jawaban_id",$id)
                     ->delete();
+                Votejawabanup::create([
+                    "user_id" => Auth::id(),
+                    "jawaban_id" => $id
+                ]);
                 return redirect()->route("pertanyaans.show",["pertanyaan"=>$pertanyaan]);
             }else{
                 if($jawaban->votejawabanup->where("user_id",Auth::id())->isEmpty()){
@@ -157,11 +171,20 @@ class JawabanController extends Controller
                     ]);
                     return redirect()->route("pertanyaans.show",["pertanyaan"=>$pertanyaan]);
                 }else{
+                    User::where("id",$user)->update([
+                        "poin" => $poin-=10
+                    ]);
+                    Jawaban::where("id",$id)->update([
+                        "poin" => $jawaban->poin-=1
+                    ]);
+                    Votejawabanup::where("user_id",Auth::id())
+                        ->where("jawaban_id",$id)
+                        ->delete();
                     return redirect()->route("pertanyaans.show",["pertanyaan"=>$pertanyaan]);
                 }
             }
         }else{
-            return redirect()->route("pertanyaans.show",["pertanyaan"=>$pertanyaan]);
+            return redirect()->route("pertanyaans.show",["pertanyaan"=>$pertanyaan])->with('status', 'Poin Belum Cukup');
         }
     }
 
@@ -171,17 +194,21 @@ class JawabanController extends Controller
         $user= $jawaban->user->id;
         $pertanyaan = $jawaban->pertanyaan->id;
         $poin= $jawaban->user->poin;
-        if (Auth::user()->poin > 15){
+        if (Auth::user()->poin >= 15){
             if($jawaban->votejawabanup->where("user_id",Auth::id())->isNotEmpty()){
                 User::where("id",$user)->update([
                     "poin" => $poin-=1
                 ]);
                 Jawaban::where("id",$id)->update([
-                    "poin" => $jawaban->poin-=1
+                    "poin" => $jawaban->poin-=2
                 ]);
                 Votejawabanup::where("user_id",Auth::id())
                     ->where("jawaban_id",$id)
                     ->delete();
+                Votejawaban::create([
+                    "user_id" => Auth::id(),
+                    "jawaban_id" => $id
+                ]);
                 return redirect()->route("pertanyaans.show",["pertanyaan"=>$pertanyaan]);
             }else{
                 if($jawaban->votejawaban->where("user_id",Auth::id())->isEmpty()){
@@ -197,6 +224,15 @@ class JawabanController extends Controller
                     ]);
                     return redirect()->route("pertanyaans.show",["pertanyaan"=>$pertanyaan]);
                 }else{
+                    User::where("id",$user)->update([
+                        "poin" => $poin+=1
+                    ]);
+                    Jawaban::where("id",$id)->update([
+                        "poin" => $jawaban->poin+=1
+                    ]);
+                    Votejawaban::where("user_id",Auth::id())
+                    ->where("jawaban_id",$id)
+                    ->delete();
                     return redirect()->route("pertanyaans.show",["pertanyaan"=>$pertanyaan]);
                 }
             }

@@ -7,7 +7,7 @@
                 <div class="jumbotron">
                     <h3>Judul: {{$pertanyaan->judul}}</h3>
                     <hr class="my-4">
-                    <h5>Pertanyaan: {{$pertanyaan->pertanyaan}}</h5>
+                    <h5>{!!$pertanyaan->pertanyaan!!}</h5>
                     <h5>Created: {{$pertanyaan->created_at->format('Y-m-d')}}</h5>
                     <h5>Updated: {{$pertanyaan->updated_at->format('Y-m-d')}}</h5>
                     @foreach ($pertanyaan->tag as $val)

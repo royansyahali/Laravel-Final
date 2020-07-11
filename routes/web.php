@@ -15,13 +15,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Auth::routes();
+
+// Route::get('/home', 'HomeController@index')->name('home');
+
 Auth::routes();
 Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
     \UniSharp\LaravelFilemanager\Lfm::routes();
 });
 
 Route::get('/home', 'HomeController@index')->name('home');
-
 Route::resource('pertanyaans', 'PertanyaanController');
 Route::get('/komentars-pertanyaan/{id}', 'PertanyaanController@komentar')->name('komentars.pertanyaan.index');
 Route::get('/jawabans', 'JawabanController@index')->name('jawabans.index');

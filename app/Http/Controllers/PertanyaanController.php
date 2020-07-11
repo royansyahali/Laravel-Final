@@ -6,7 +6,12 @@ use Illuminate\Http\Request;
 use App\Pertanyaan;
 use App\Tag;
 use App\Jawaban;
+use App\Votepertanyaan;
+use App\Votepertanyaanup;
+use App\User;
 use Illuminate\Support\Facades\Auth;
+
+use function Symfony\Component\VarDumper\Dumper\esc;
 
 class PertanyaanController extends Controller
 {
@@ -143,4 +148,85 @@ class PertanyaanController extends Controller
         $pertanyaan = Pertanyaan::find($id);
         return view('pertanyaan.komentar',compact('pertanyaan'));
     }
+
+    public function upvote($id){
+        $pertanyaan = Pertanyaan::find($id);
+        $user= $pertanyaan->user->id;
+        $poin= $pertanyaan->user->poin;
+        if (Auth::user()->poin > 15){
+            if($pertanyaan->votepertanyaan->where("user_id",Auth::id())->isNotEmpty()){
+                User::where("id",$user)->update([
+                    "poin" => $poin+=10
+                ]);
+                Pertanyaan::where("id",$id)->update([
+                    "poin" => $pertanyaan->poin+=1
+                ]);
+                Votepertanyaan::where("user_id",Auth::id())
+                    ->where("pertanyaan_id",$id)
+                    ->delete();
+                return redirect()->route("pertanyaans.index");
+            }else{
+                if($pertanyaan->votepertanyaanup->where("user_id",Auth::id())->isEmpty()){
+                    User::where("id",$user)->update([
+                        "poin" => $poin+=10
+                    ]);
+                    Pertanyaan::where("id",$id)->update([
+                        "poin" => $pertanyaan->poin+=1
+                    ]);
+                    Votepertanyaanup::where("user_id",Auth::id())
+                        ->where("pertanyaan_id",$id)
+                        ->delete();
+                    Votepertanyaanup::create([
+                            "user_id" => Auth::id(),
+                            "pertanyaan_id" => $id
+                    ]);
+                    return redirect()->route("pertanyaans.index");
+                }else{
+                    return redirect()->route("pertanyaans.index");
+                }
+            }
+        }else{
+            return redirect()->route("pertanyaans.index");
+        }
+    }
+
+
+    public function downvote($id){
+        $pertanyaan = Pertanyaan::find($id);
+        $user= $pertanyaan->user->id;
+        $poin= $pertanyaan->user->poin;
+        if(Auth::user()->poin > 15){
+            if($pertanyaan->votepertanyaanup->where("user_id",Auth::id())->isNotEmpty()){
+                User::where("id",$user)->update([
+                    "poin" => $poin-=1
+                ]);
+                Pertanyaan::where("id",$id)->update([
+                    "poin" => $pertanyaan->poin-=1
+                ]);
+                Votepertanyaanup::where("user_id",Auth::id())
+                    ->where("pertanyaan_id",$id)
+                    ->delete();
+                return redirect()->route("pertanyaans.index");
+            }else{
+                if($pertanyaan->votepertanyaan->where("user_id",Auth::id())->isEmpty()){
+                    User::where("id",$user)->update([
+                        "poin" => $poin-=1
+                    ]);
+                    Pertanyaan::where("id",$id)->update([
+                        "poin" => $pertanyaan->poin-=1
+                    ]);
+                    Votepertanyaan::create([
+                            "user_id" => Auth::id(),
+                            "pertanyaan_id" => $id
+                    ]);
+                    return redirect()->route("pertanyaans.index");
+                }else{
+                    return redirect()->route("pertanyaans.index");
+                }
+            }
+        }else{
+            return redirect()->route("pertanyaans.index");
+        }
+    }
+
 }
